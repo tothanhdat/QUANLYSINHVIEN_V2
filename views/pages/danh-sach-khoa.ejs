@@ -15,7 +15,7 @@
           <td><%= element.tenKhoa%></td>
           <td><%= element.maKhoa%></td>
           <td>
-          <a href="/khoa/delete/<%= element._id%>">
+          <a href="/khoa/delete/<%= element._id%>" onclick = "return confirm('Are you sure delete')">
           <button class="btn btn-danger" id="btnRemove">
           <i class="fa fa-times"></i> 
             Xóa
