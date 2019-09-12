@@ -1,18 +1,27 @@
 <% include ../partials/header%>
 <%- include ../partials/sidebar%>
 <h3 style="font-family: utm-avo">DANH SÁCH SINH VIÊN</h3>
-<table class="table table-hover">
+  <form class="search-bar">
+        <input type="text" class="form-control" id="search" placeholder="Tìm Kiếm Sinh Viên">
+         <a href="sinhvien/danh-sach"></a>
+  </form>
+  <br>
+<table class="table table-hover" id="table_container">
   <thead>
     <tr>
+        <th>Hình ảnh</th>
         <th>Họ Tên</th>
         <th>MSSV</th>
         <th>Khoa</th>
       </tr>
   </thead>
-  <tbody>
+  <div id="cannot_found" style="text-align: center; display: none">
+            <strong>KHÔNG TÌM THẤY</strong>
+  </div>
+  <tbody id="list_data">
     <% result.forEach(element => { %>
       <tr>
-          <td><img src="/image/<%=element.avatar %>" width="50px" height="50px" alt="your_image"></td>
+        <td><img src="/image/<%=element.avatar %>" width="50px" height="50px" alt="your_image"></td>
           <td><%= element.tenSV%></td>
           <td><%= element.mssv%></td>
           <td><%= element.maKhoa%></td>
@@ -35,3 +44,56 @@
   </tbody>
 </table>
 <% include ../partials/footer %>
+
+<script>
+
+ $(document).ready(function() {
+   $('#search').keyup(function(){
+      let search = $('#search').val();
+      const url = '/sinhvien/tim-kiem?search=';
+      $.ajax({
+        url: `${url}${search}`,
+        method: 'GET',
+        success: function(data){
+          if(data.data.length < 1)
+          {
+              $('#table_container').hide();
+              $('#cannot_found').show();
+          }
+          else{
+            $('#cannot_found').hide();
+            $('#table_container').show();
+            $('#list_data').empty();
+              data.data.forEach(infoStudent => {
+                $('#list_data').append(`
+                    <tr>
+                        <td><img src="/image/${infoStudent.avatar}" width="50px" height="50px" alt="your_image"></td>
+                        <td>${infoStudent.tenSV}</td>
+                        <td>${infoStudent.mssv}</td>
+                        <td>${infoStudent.maKhoa}</td>
+                        <td>
+                        <a href="/sinhvien/delete/${infoStudent._id}" onclick = "return confirm('Are you sure delete')">
+                        <button class="btn btn-danger" id="btnRemove" type='submit'>
+                        <i class="fa fa-times"></i>
+                          Xóa
+                        </button>
+                        </a>
+                        <a href="/sinhvien/update/${infoStudent._id}">
+                          <button class="btn btn-success" id="btnUpdate" type='submit'>
+                          <i class="fa fa-check-square-o"></i>
+                            Sửa
+                          </button>
+                        </a>
+                        </td>
+                    </tr>
+                `);
+              });
+            }
+          },
+        error: function(error){
+          console.log({error})
+        }
+      })
+    });
+});
+</script>

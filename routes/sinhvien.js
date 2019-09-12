@@ -25,7 +25,22 @@ route.get('/danh-sach', ROLE_ADMIN, async (req, res) => {
     let result = await SINH_VIEN_MODEL.getList();
     res.render('pages/danh-sach-sinh-vien', { result: result.data });
 });
-route.get('/:id', ROLE_ADMIN, async (req, res) => {
+route.get('/tim-kiem', async (req, res) => {
+    try {
+        let { search } = req.query;
+        const dataSearch = await SINH_VIEN_MODEL.find({
+            $or: [
+                { tenSV: new RegExp(search, 'i') },
+                { mssv: new RegExp(search, 'i') },
+                { maKhoa: new RegExp(search, 'i') },
+            ]
+        });
+        res.json({ data: dataSearch });
+    } catch (error) {
+        res.json('Error');
+    }
+});
+route.get('/:id?', ROLE_ADMIN, async (req, res) => {
     let { id } = req.params;
     let result = await SINH_VIEN_MODEL.getID(id);
     res.json(result);
@@ -51,14 +66,15 @@ route.get('/delete/:id', ROLE_ADMIN, async (req, res) => {
     try {
         let { id } = req.params;
         let result = await SINH_VIEN_MODEL.deleteID(id);
-        fs.unlink(`./public/image/${ result.data.avatar }`,function(err){
-            if(err) return console.log(err);
+        fs.unlink(`./public/image/${result.data.avatar}`, function (err) {
+            if (err) return console.log(err);
             console.log('file deleted successfully');
-       }); 
+        });
         res.redirect('/sinhvien/danh-sach');
     } catch (error) {
         res.redirect('/sinhvien/loi-xoa-sinh-vien');
     }
 });
+
 
 module.exports = route;
