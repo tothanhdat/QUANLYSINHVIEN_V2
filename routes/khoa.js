@@ -19,7 +19,21 @@ route.get('/danh-sach', ROLE_ADMIN, async (req, res) => {
     let result = await KHOA_MODEL.getList();
     res.render('pages/danh-sach-khoa', { result: result.data });
 });
-route.get('/:id', ROLE_ADMIN, async (req, res) => {
+route.get('/tim-kiem', async (req, res) => {
+    try {
+        let { search } = req.query;
+        const dataSearch = await KHOA_MODEL.find({
+            $or: [
+                { tenKhoa: new RegExp(search, 'i') },
+                { maKhoa: new RegExp(search, 'i') },
+            ]
+        });
+        res.json({ data: dataSearch });
+    } catch (error) {
+        res.json('Error');
+    }
+});
+route.get('/:id?', ROLE_ADMIN, async (req, res) => {
     let { id } = req.params;
     //let { tenKhoa, maKhoa } = req.body;
     let result = await KHOA_MODEL.getID(id);

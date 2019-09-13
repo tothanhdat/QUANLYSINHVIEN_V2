@@ -1,14 +1,21 @@
 <% include ../partials/header%>
 <%- include ../partials/sidebar%>
 <h3 style="font-family: utm-avo">DANH SÁCH KHOA</h3>
-<table class="table table-hover">
+<form class="search-bar">
+        <input type="text" class="form-control" id="search" placeholder="Tìm Kiếm Khoa">
+         <a href="/khoa/danh-sach"></a>
+  </form>
+<table class="table table-hover" id ="table_container">
   <thead>
     <tr>
         <th>Tên Khoa</th>
         <th>Mã Khoa</th>
       </tr>
   </thead>
-  <tbody>
+  <div id="cannot_found" style="text-align: center; display: none">
+            <strong>KHÔNG TÌM THẤY</strong>
+  </div>
+  <tbody id= "list_data">
   <% if (result && result.length > 0) { %>
    <% result.forEach(element => { %>
       <tr>
@@ -34,3 +41,53 @@
   </tbody>
 </table>
 <% include ../partials/footer %>
+<script>
+
+ $(document).ready(function() {
+   $('#search').keyup(function(){
+      let search = $('#search').val();
+      const url = '/khoa/tim-kiem?search=';
+      $.ajax({
+        url: `${url}${search}`,
+        method: 'GET',
+        success: function(data){
+          if(data.data.length < 1)
+          {
+              $('#table_container').hide();
+              $('#cannot_found').show();
+          }
+          else{
+            $('#cannot_found').hide();
+            $('#table_container').show();
+            $('#list_data').empty();
+              data.data.forEach(infoKhoa => {
+                $('#list_data').append(`
+                    <tr>
+                        <td>${infoKhoa.tenKhoa}</td>
+                        <td>${infoKhoa.maKhoa}</td>
+                        <td>
+                        <a href="/sinhvien/delete/${infoKhoa._id}" onclick = "return confirm('Are you sure delete')">
+                        <button class="btn btn-danger" id="btnRemove" type='submit'>
+                        <i class="fa fa-times"></i>
+                          Xóa
+                        </button>
+                        </a>
+                        <a href="/sinhvien/update/${infoKhoa._id}">
+                          <button class="btn btn-success" id="btnUpdate" type='submit'>
+                          <i class="fa fa-check-square-o"></i>
+                            Sửa
+                          </button>
+                        </a>
+                        </td>
+                    </tr>
+                `);
+              });
+            }
+          },
+        error: function(error){
+          console.log({error})
+        }
+      })
+    });
+});
+</script>
