@@ -5,4 +5,4 @@ var KhoaSchema = new Shema ({
     maKhoa: String
 });
 var Khoamodel = mongoose.model('khoa', KhoaSchema);
-module.exports = Khoamodel
+module.exports = Khoamodel;

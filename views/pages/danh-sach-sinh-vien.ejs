@@ -2,7 +2,7 @@
 <%- include ../partials/sidebar%>
 <h3 style="font-family: utm-avo">DANH SÁCH SINH VIÊN</h3>
   <form class="search-bar">
-        <input type="text" class="form-control" id="search" placeholder="Tìm Kiếm Sinh Viên">
+        <input type="text" class="form-control" id="search" placeholder="Tìm Kiếm theo Tên hoặc MSSV">
          <a href="sinhvien/danh-sach"></a>
   </form>
   <br>
@@ -16,10 +16,13 @@
       </tr>
   </thead>
   <div id="cannot_found" style="text-align: center; display: none">
-            <strong>KHÔNG TÌM THẤY</strong>
+        <strong>KHÔNG TÌM THẤY</strong>
   </div>
   <tbody id="list_data">
     <% result.forEach(element => { %>
+      <div id="can_found" style="text-align: center; display: none">
+        <strong>TÌM THẤY <%=1%> SINH VIÊN</strong>
+    </div>
       <tr>
         <td><img src="/image/<%=element.avatar %>" width="50px" height="50px" alt="your_image"></td>
           <td><%= element.tenSV%></td>

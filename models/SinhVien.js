@@ -36,12 +36,13 @@ module.exports = class SinhVien extends SINH_VIEN {
             }
         });
     }
-    static updateID(id, hoTen, mssv, maKhoa) {
+    static updateID({ id, hoTen, mssv, maKhoa, avatar }) {
         return new Promise(async resolve => {
             try {
+                console.log({ id, hoTen, mssv, maKhoa, avatar });
                 // let checkID = await SinhVien.findById({ _id: id });
                 // if (!checkID) return resolve({ error: true, message: 'cannot_search_id_sinh_vien' });
-                let updateID = await SinhVien.findByIdAndUpdate(id, { tenSV: hoTen, mssv, maKhoa }, { new: true });
+                let updateID = await SinhVien.findByIdAndUpdate(id, { tenSV: hoTen, mssv, maKhoa, avatar}, { new: true });
                 resolve({ error: false, data: updateID });
             } catch (error) {
                 return resolve({ error: true, message: error.message });

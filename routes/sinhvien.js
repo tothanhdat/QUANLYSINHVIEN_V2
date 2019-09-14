@@ -15,6 +15,7 @@ route.post('/add', ROLE_ADMIN, uploadMulter.single('avatar'), async (req, res) =
         let infoFile = req.file;
         let listKhoa = await KHOA_MODEL.getList();
         let infoSinhVien = await SINH_VIEN_MODEL.insert({ tenSV: hoTen, mssv, maKhoa, avatar: infoFile.originalname });
+        console.log({ infoSinhVien });
         if (infoSinhVien.error && infoSinhVien.message == 'sinh_vien_existed') return res.render('pages/them-sinh-vien', { listKhoa: listKhoa.data, alertInsertStudentError: true });
         res.redirect('/sinhvien/danh-sach');
     } catch (error) {
@@ -40,23 +41,19 @@ route.get('/tim-kiem', async (req, res) => {
         res.json('Error');
     }
 });
-route.get('/:id?', ROLE_ADMIN, async (req, res) => {
-    let { id } = req.params;
-    let result = await SINH_VIEN_MODEL.getID(id);
-    res.json(result);
-});
+
 route.get('/update/:id', ROLE_ADMIN, async (req, res) => {
     let { id } = req.params;
     let result = await SINH_VIEN_MODEL.getID(id);
     let listFaculty = await KHOA_MODEL.getList();
     res.render('pages/edit-sinh-vien', { infoStudent: result.data, listFaculty: listFaculty.data });
 });
-route.post('/update/:id', ROLE_ADMIN, async (req, res) => {
-    let { id } = req.params;
-    let { hoTen, mssv, maKhoa } = req.body;
-    console.log({ id, hoTen, mssv });
+route.post('/update/:id', ROLE_ADMIN, uploadMulter.single('avatar'), async (req, res) => {
     try {
-        let result = await SINH_VIEN_MODEL.updateID(id, hoTen, mssv, maKhoa);
+        let { id } = req.params;
+        let infoFile  = req.file;
+        let { hoTen, mssv, maKhoa } = req.body;
+        let result = await SINH_VIEN_MODEL.updateID({ id, hoTen, mssv, maKhoa, avatar: infoFile.originalname });
         res.redirect('/sinhvien/danh-sach');
     } catch (error) {
         res.redirect('/sinhvien/loi-update-sinh-vien');
@@ -75,6 +72,10 @@ route.get('/delete/:id', ROLE_ADMIN, async (req, res) => {
         res.redirect('/sinhvien/loi-xoa-sinh-vien');
     }
 });
-
+route.get('/:id?', ROLE_ADMIN, async (req, res) => {
+    let { id } = req.params;
+    let result = await SINH_VIEN_MODEL.getID(id);
+    res.json(result);
+});
 
 module.exports = route;
